@@ -9,6 +9,9 @@
 Train shadow net script
 """
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import os.path as ops
 import time
 import math
@@ -180,7 +183,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, ord_map_dict_path
     )
 
     # set up training graph
-    with tf.device('/gpu:1'):
+    with tf.device('/gpu:0'):
 
         # compute loss and seq distance
         train_inference_ret, train_ctc_loss = shadownet.compute_loss(
@@ -246,18 +249,21 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, ord_map_dict_path
 
     # Set saver configuration
     saver = tf.train.Saver()
-    model_save_dir = '../../../model/crnn_syn90k'
+    model_save_dir = '../../../model/recognition/crnn_syn90k'
     os.makedirs(model_save_dir, exist_ok=True)
     train_start_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
     model_name = 'shadownet_{:s}.ckpt'.format(str(train_start_time))
     model_save_path = ops.join(model_save_dir, model_name)
 
     # Set sess configuration
-    sess_config = tf.ConfigProto(allow_soft_placement=True)
+    sess_config = tf.ConfigProto(allow_soft_placement=True,log_device_placement=True)
     sess_config.gpu_options.per_process_gpu_memory_fraction = CFG.TRAIN.GPU_MEMORY_FRACTION
     sess_config.gpu_options.allow_growth = CFG.TRAIN.TF_ALLOW_GROWTH
-
     sess = tf.Session(config=sess_config)
+
+    #gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333, allow_growth=True)
+    #config = tf.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True,log_device_placement=True)
+    #sess = tf.Session(config=config)
 
     summary_writer = tf.summary.FileWriter(tboard_save_dir)
     summary_writer.add_graph(sess.graph)
@@ -331,7 +337,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, ord_map_dict_path
             # add training sumary
             summary_writer.add_summary(summary=merge_summary_value, global_step=epoch)
 
-            if epoch % 2000 == 0:
+            if epoch % 1000 == 0:
                 saver.save(sess=sess, save_path=model_save_path, global_step=epoch)
 
     return np.array(cost_history[1:])  # Don't return the first np.inf
@@ -441,7 +447,7 @@ def train_shadownet_multi_gpu(dataset_dir, weights_path, char_dict_path, ord_map
                         batchnorm_updates_op)
 
     # set tensorflow summary
-    tboard_save_path = 'tboard/crnn_syn90k_multi_gpu'
+    tboard_save_path = '../../../model/recognition/tboard/crnn_syn90k_multi_gpu'
     os.makedirs(tboard_save_path, exist_ok=True)
 
     summary_writer = tf.summary.FileWriter(tboard_save_path)
@@ -459,14 +465,14 @@ def train_shadownet_multi_gpu(dataset_dir, weights_path, char_dict_path, ord_map
 
     # set tensorflow saver
     saver = tf.train.Saver()
-    model_save_dir = 'model/crnn_syn90k_multi_gpu'
+    model_save_dir = '../../../model/recognition/crnn_syn90k_multi_gpu'
     os.makedirs(model_save_dir, exist_ok=True)
     train_start_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
     model_name = 'shadownet_{:s}.ckpt'.format(str(train_start_time))
     model_save_path = ops.join(model_save_dir, model_name)
 
     # set sess config
-    sess_config = tf.ConfigProto(device_count={'GPU': CFG.TRAIN.GPU_NUM}, allow_soft_placement=True)
+    sess_config = tf.ConfigProto(device_count={'GPU': CFG.TRAIN.GPU_NUM}, allow_soft_placement=True,log_device_placement=True)
     sess_config.gpu_options.per_process_gpu_memory_fraction = CFG.TRAIN.GPU_MEMORY_FRACTION
     sess_config.gpu_options.allow_growth = CFG.TRAIN.TF_ALLOW_GROWTH
     sess_config.gpu_options.allocator_type = 'BFC'
@@ -548,7 +554,7 @@ def train_shadownet_multi_gpu(dataset_dir, weights_path, char_dict_path, ord_map
                                    np.mean(val_cost_time_mean)))
                 val_cost_time_mean.clear()
 
-            if epoch % 5000 == 0:
+            if epoch % 2000 == 0:
                 saver.save(sess=sess, save_path=model_save_path, global_step=epoch)
     sess.close()
 

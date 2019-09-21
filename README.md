@@ -2,6 +2,10 @@
 票据识别，大赛地址：http://rrc.cvc.uab.es/?ch=13
 
 
+# 识别模型READEME请参考文件：src/recgnition/reademe_liu.txt
+
+
+
 ## 里程碑
 
 ![里程碑](里程碑.png)

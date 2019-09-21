@@ -16,6 +16,10 @@ from tensorflow.contrib import rnn
 from crnn_model import cnn_basenet
 from config import global_config
 
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 CFG = global_config.cfg
 
 
@@ -216,22 +220,23 @@ class ShadowNet(cnn_basenet.CNNBaseModel):
         :param reuse:
         :return:
         """
-        with tf.variable_scope(name_or_scope=name, reuse=reuse):
+        with tf.device('/gpu:0'):
+            with tf.variable_scope(name_or_scope=name, reuse=reuse):
 
-            # first apply the cnn feature extraction stage
-            cnn_out = self._feature_sequence_extraction(
-                inputdata=inputdata, name='feature_extraction_module'
-            )
+                # first apply the cnn feature extraction stage
+                cnn_out = self._feature_sequence_extraction(
+                    inputdata=inputdata, name='feature_extraction_module'
+                )
 
-            # second apply the map to sequence stage
-            sequence = self._map_to_sequence(
-                inputdata=cnn_out, name='map_to_sequence_module'
-            )
+                # second apply the map to sequence stage
+                sequence = self._map_to_sequence(
+                    inputdata=cnn_out, name='map_to_sequence_module'
+                )
 
-            # third apply the sequence label stage
-            net_out, raw_pred = self._sequence_label(
-                inputdata=sequence, name='sequence_rnn_module'
-            )
+                # third apply the sequence label stage
+                net_out, raw_pred = self._sequence_label(
+                    inputdata=sequence, name='sequence_rnn_module'
+                )
 
         return net_out
 

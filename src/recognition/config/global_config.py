@@ -45,7 +45,7 @@ __C.TRAIN.PATIENCE_DELTA = 1e-3
 
 # Set the shadownet training epochs
 #__C.TRAIN.EPOCHS = 2000000
-__C.TRAIN.EPOCHS = 204000
+__C.TRAIN.EPOCHS = 240000
 # Set the display step
 __C.TRAIN.DISPLAY_STEP = 1
 # Set the test display step during training process
@@ -59,9 +59,9 @@ __C.TRAIN.GPU_MEMORY_FRACTION = 0.9
 # Set the GPU allow growth parameter during tensorflow training process
 __C.TRAIN.TF_ALLOW_GROWTH = True
 # Set the shadownet training batch size
-__C.TRAIN.BATCH_SIZE = 32
+__C.TRAIN.BATCH_SIZE = 6
 # Set the shadownet validation batch size
-__C.TRAIN.VAL_BATCH_SIZE = 32
+__C.TRAIN.VAL_BATCH_SIZE = 6
 # Set the learning rate decay steps
 __C.TRAIN.LR_DECAY_STEPS = 500000
 # Set the learning rate decay rate
@@ -69,9 +69,9 @@ __C.TRAIN.LR_DECAY_RATE = 0.1
 # Update learning rate in jumps?
 __C.TRAIN.LR_STAIRCASE = True
 # Set multi process nums
-__C.TRAIN.CPU_MULTI_PROCESS_NUMS = 6
+__C.TRAIN.CPU_MULTI_PROCESS_NUMS = 1
 # Set Gpu nums
-__C.TRAIN.GPU_NUM = 2
+__C.TRAIN.GPU_NUM = 1
 # Set moving average decay
 __C.TRAIN.MOVING_AVERAGE_DECAY = 0.9999
 # Set val display step
@@ -83,6 +83,6 @@ __C.TEST = edict()
 # Set the GPU resource used during testing process
 __C.TEST.GPU_MEMORY_FRACTION = 0.6
 # Set the GPU allow growth parameter during tensorflow testing process
-__C.TEST.TF_ALLOW_GROWTH = False
+__C.TEST.TF_ALLOW_GROWTH = True
 # Set the test batch size
-__C.TEST.BATCH_SIZE = 32
+__C.TEST.BATCH_SIZE = 6

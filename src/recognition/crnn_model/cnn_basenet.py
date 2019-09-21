@@ -418,7 +418,7 @@ class CNNBaseModel(object):
                 square_means.append(batch_square_mean)
 
         # if your GPUs have NVLinks and you've install NCCL2, you can change `/cpu:0` to `/gpu:0`
-        with tf.device('/cpu:0'):
+        with tf.device('/gpu:0'):
             shape = tf.shape(list_input[0])
             num = shape[0] * shape[1] * shape[2] * len(list_input)
             mean = tf.reduce_mean(means, axis=0)

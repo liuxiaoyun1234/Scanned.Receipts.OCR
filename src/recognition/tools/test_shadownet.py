@@ -10,6 +10,8 @@ Use shadow net to recognize the scene text of a single image
 """
 import argparse
 import os.path as ops
+import  sys
+sys.path.append('..')
 
 import cv2
 import numpy as np
