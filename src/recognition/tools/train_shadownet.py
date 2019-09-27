@@ -337,7 +337,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, ord_map_dict_path
             # add training sumary
             summary_writer.add_summary(summary=merge_summary_value, global_step=epoch)
 
-            if epoch % 1000 == 0:
+            if epoch % 4000 == 0:
                 saver.save(sess=sess, save_path=model_save_path, global_step=epoch)
 
     return np.array(cost_history[1:])  # Don't return the first np.inf
